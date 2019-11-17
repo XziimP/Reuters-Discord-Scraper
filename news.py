@@ -2,9 +2,23 @@ import discord
 import asyncio
 from discord.ext import commands
 from bs4 import BeautifulSoup
+import feedparser
+import tasks
+import threading
+import traceback
+import tweepy
+import summa
+import django
+from datetime import datetime
+from time import mktime
+import requests
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from urllib.error import URLError
+
+client = discord.Client()
+
+token = "your_token"
 
 def openlink (url):
 	print('opening link %s'%(url))
@@ -31,17 +45,22 @@ def doall (site):
 
 client = discord.Client()
 
+async def my_background_task():
+    await asyncio.sleep(60)
+    channel = discord.Object(id='636533302748119053')
+    last_post = ""
+
 @client.event
 async def on_ready():
 	print('Logged in as')
 	print(client.user.name)
 	print(client.user.id)
-	print('-----------')
+	print('--Burn-Bot--------')
 
 @client.event
 async def on_message(message):
-	if (message.content.startswith('!headlines')):
-		x = message.content.replace('!headlines', '')
+	if (message.content.startswith('hello')):
+		x = message.content.replace('bernie bot?', 'politics')
 		if x == '':
 			x = 10
 		elif x[0] != ' ' :
@@ -49,16 +68,19 @@ async def on_message(message):
 		else:
 			x = int(x.replace(' ', ''))
 			
-		links = doall("https://www.reuters.com")
-		await client.send_message(message.channel, 'Here are some headlines for you.')
+		links = doall("https://reuters.com/politics")
+		await client.send_message(message.channel, 'Ehhh uhhh climate change is real damnit! https://tenor.com/view/bernie-trump-gif-5203774')
 		print(links)
-		print('Printing headlines')
+		print('Print all')
 		for n in range(0, x):
-			await client.send_message(message.channel, '%s'%(links[n]))
-	
-	elif (message.content == 'END NEWS MODULE'):
-		await client.send_message(message.channel, 'News module shutting down')
-		client.close()
-		raise SystemExit
+		    await client.send_message(message.channel, '%s'%(links[n]))
+	    
+    #elif (message.content == 'NEWS MODULE'):
+	#	await client.send_message(message.channel, 'News module shutting down')
+	#	client.close()
+	#	raise SystemExit
 
-client.run('BOT CREDENTIALS GO HERE')
+        #await asyncio.sleep(60)
+
+client.loop.create_task(my_background_task())
+client.run(token)
